@@ -29,9 +29,7 @@ const usersPost = async (req, res = response) => {
     //Se graba en base de datos 
     await user.save();
 
-    res.status(200).json ({ 
-        user 
-    })
+    res.status(200).json (GenericFunctions.genericResponse("success",user,200,[],0))
 }
 
 const usersPut = async (req, res = response) => {
@@ -47,23 +45,22 @@ const usersPut = async (req, res = response) => {
     res.status(200).json (GenericFunctions.genericResponse("Registro actualizado correctamente", usuario,200,[],0));
 }
 
+const usersDelete = async (req, res = response) => {
+    const { id } = req.params;
+    const query = { status: false }
+    const authUser = req.usuario;
+    //Eliminacion fisica
+    //const response  = await User.findByIdAndDelete(id);
+    //Eliminacion Logica 
+    const response = await User.findByIdAndUpdate(id, query);
+    res.status(200).json (GenericFunctions.genericResponse("Registro eliminado correctamente",{ response },200,[],0));
+}
+
 const usersPatch = (req, res = response) => {
     res.status(200).json ({ 
         message: 'Helo world - PATCH - controlador'
     })
 }
-
-const usersDelete = async (req, res = response) => {
-    const { id } = req.params;
-    const query = { status: false }
-    //Eliminacion fisica
-    //const response  = await User.findByIdAndDelete(id);
-
-    //Eliminacion Logica 
-    const response = await User.findByIdAndUpdate(id, query);
-    res.status(200).json (GenericFunctions.genericResponse("Registro eliminado correctamente", response,200,[],0));
-}
-
 module.exports = {
     usersGet,
     usersPost,

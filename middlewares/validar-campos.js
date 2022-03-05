@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { request, response } = require('express')
+const { response, request } = require('express')
 
 const GenericFunctions = require('../utils/GenericFunctions');
 
