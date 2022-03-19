@@ -7,6 +7,61 @@
     <title>Node</title>
 </head>
 <body>
-    <h1>Acceso Denegado</h1>
+    <h1>Google Auth</h1>
+    <hr>
+    <div id="g_id_onload"
+         data-client_id="206974247201-va7uggo6suluv67bosn2hhrqrefccqkn.apps.googleusercontent.com"
+         data-auto_prompt="false"
+         data-callback="handleCredentialResponse">
+      </div>
+      <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+      </div>
+     
+    <button type="button" id="btn_logaut" style="margin-top:10px">Logaut account</button>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+         function handleCredentialResponse(response) {
+           // decodeJwtResponse() is a custom function defined by you
+           // to decode the credential response.
+           //const responsePayload = decodeJwtResponse(response.credential);
+           //Google Token 
+           console.log(response.credential)
+           const body = {id_token : response.credential}
+           fetch('http://localhost:3000/api/auth/google',{ 
+                  method: 'POST', 
+                  body: JSON.stringify(body), 
+                  headers: {
+                     "Content-Type": "application/json"
+                  }
+               })
+               .then(resp => resp.json())
+               .then(resp => {
+                  console.log('Response de mi backend ', resp);
+                  if( Object.entries(resp.body).length > 0 ){
+                     localStorage.setItem('email', resp.body.usuario.email);
+                  }
+
+                  
+               }).catch(err => console.error(err))
+         }
+
+         const buttonLogAut = document.getElementById("btn_logaut");
+
+         buttonLogAut.onclick = () => {
+            // console.log()
+            google.accounts.id.disableAutoSelect();
+            google.accounts.id.revoke(localStorage.getItem("email"), done => {
+               localStorage.clear();
+               location.reload();
+            });
+         }
+
+      </script>  
 </body>
 </html>
