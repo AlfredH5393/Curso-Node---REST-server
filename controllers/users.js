@@ -12,7 +12,7 @@ const usersGet =  async (req = request, res = response) => {
         User.find(filter).limit(Number(limit)).skip(Number(skip)),
         User.countDocuments(filter)
     ])
-    res.status(400).json (GenericFunctions.genericResponse("success",users,200,[],total))
+    res.status(200).json (GenericFunctions.genericResponse("success",users,200,[],total))
 }
 
 const usersPost = async (req, res = response) => { 
