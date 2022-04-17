@@ -1,6 +1,6 @@
 const {res, req} = require('express');
 const { User, Category, Product } = require('../models');
-const GenericFunctions = require('../utils/GenericFunctions');
+const GenericResponse = require('../utils/GenericResponses');
 
 /**
  * Obtener todos los productos activos
@@ -17,7 +17,7 @@ const getProducts = async (req = req, res = res) => {
                .skip(Number(skip))
                .populate('user','name').populate('category','name')
     ])
-    res.status(200).json (GenericFunctions.genericResponse("success",products,200,[],total))
+    res.status(200).json (GenericResponse.responseWithData("success",products,200,[],total))
 }
 
 /**
@@ -28,7 +28,7 @@ const getProducts = async (req = req, res = res) => {
 const getProduct = async (req = req, res = res) => {   
     const { id } = req.params;
     const product = await Product.findById(id).populate('user','name').populate('category','name');
-    res.status(200).json (GenericFunctions.genericResponse("success",product,200,[],1))
+    res.status(200).json (GenericResponse.responseWithData("success",product,200,[],1))
 }
 
 /**
@@ -44,7 +44,7 @@ const createProduct = async (req = req, res = res) => {
     data.name = data.name.toUpperCase();
     const product = new Product(data);
     await product.save();
-    res.status(201).json(GenericFunctions.genericResponse(
+    res.status(201).json(GenericResponse.responseWithData(
         "Producto guardado exitosamente",{ product },201,[],0
     ));
 }
@@ -61,7 +61,7 @@ const updateProduct = async (req = req, res = res) => {
     data.user =  req.usuario._id;
     await Product.findByIdAndUpdate( id, data, {new: true} );
     const product = await Product.findById(id).populate('user', 'name');
-    res.status(200).json (GenericFunctions.genericResponse("Registro actualizado correctamente", product,200,[],0));
+    res.status(200).json (GenericResponse.responseWithData("Registro actualizado correctamente", product,200,[],0));
 }
 
 /**
@@ -72,7 +72,7 @@ const updateProduct = async (req = req, res = res) => {
 const deleteProduct = async (req = req, res = res) => {
     const { id } = req.params;
     const deleted = await Product.findByIdAndUpdate(id, { status: false},{new: true});
-    res.status(200).json (GenericFunctions.genericResponse("Registro eliminado correctamente",deleted,200,[],0));
+    res.status(200).json (GenericResponse.responseWithData("Registro eliminado correctamente",deleted,200,[],0));
 }
 
 module.exports = {

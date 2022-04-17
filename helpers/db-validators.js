@@ -77,6 +77,13 @@ const existNameProduct = async ( name = '' ) => {
     }
 }
 
+const existIdByCollection = async ( collectionId = "", collection ) =>{
+    const model = await collection.findById(collectionId);
+    if(!model)
+        return {exist: false, result: model};
+    
+    return {exist: true, result: model};
+}
 
 module.exports = {
     existNameCategory,
@@ -86,4 +93,5 @@ module.exports = {
     isProductExist,
     isUserExistById,
     isRoleValid,
+    existIdByCollection
 }

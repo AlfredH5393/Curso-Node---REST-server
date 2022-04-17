@@ -2,7 +2,7 @@ const {  response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
-const GenericFunctions = require('../utils/GenericFunctions');
+const GenericResponse = require('../utils/GenericResponses');
 
 
 const usersGet =  async (req = request, res = response) => {
@@ -12,7 +12,7 @@ const usersGet =  async (req = request, res = response) => {
         User.find(filter).limit(Number(limit)).skip(Number(skip)),
         User.countDocuments(filter)
     ])
-    res.status(200).json (GenericFunctions.genericResponse("success",users,200,[],total))
+    res.status(200).json (GenericResponse.responseWithData("success",users,200,[],total))
 }
 
 const usersPost = async (req, res = response) => { 
@@ -29,7 +29,7 @@ const usersPost = async (req, res = response) => {
     //Se graba en base de datos 
     await user.save();
 
-    res.status(200).json (GenericFunctions.genericResponse("success",user,200,[],0))
+    res.status(200).json (GenericResponse.responseWithData("success",user,200,[],0))
 }
 
 const usersPut = async (req, res = response) => {
@@ -42,7 +42,7 @@ const usersPut = async (req, res = response) => {
         user.password = bcryptjs.hashSync( password, salt );
     }
     const usuario = await User.findByIdAndUpdate(id, user)
-    res.status(200).json (GenericFunctions.genericResponse("Registro actualizado correctamente", usuario,200,[],0));
+    res.status(200).json (GenericResponse.responseWithData("Registro actualizado correctamente", usuario,200,[],0));
 }
 
 const usersDelete = async (req, res = response) => {
@@ -53,7 +53,7 @@ const usersDelete = async (req, res = response) => {
     //const response  = await User.findByIdAndDelete(id);
     //Eliminacion Logica 
     const response = await User.findByIdAndUpdate(id, query);
-    res.status(200).json (GenericFunctions.genericResponse("Registro eliminado correctamente",{ response },200,[],0));
+    res.status(200).json (GenericResponse.responseWithData("Registro eliminado correctamente",{ response },200,[],0));
 }
 
 const usersPatch = (req, res = response) => {

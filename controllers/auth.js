@@ -1,6 +1,6 @@
 const {request, response } = require('express');
 const bcryptjs = require('bcryptjs');
-const GenericFunctions = require('../utils/GenericFunctions');
+const GenericResponse = require('../utils/GenericResponses');
 const User = require('../models/user');
 const { generarJWT } = require('../helpers/generar-jwt');
 const { googleVerify } = require('../helpers/google-verify');
@@ -11,24 +11,24 @@ const login = async ( req = request, res = response) =>{
         const user = await User.findOne({ email });
         console.log('user:', user);
         if(!user){
-            return res.status(400).json(GenericFunctions.genericResponse("Usuario / Password no son correcto - Correo ",{},400,[],0));
+            return res.status(400).json(GenericResponse.responseWithData("Usuario / Password no son correcto - Correo ",{},400,[],0));
         }
 
         //Si el usuario esta activo
         if(!user.status){
-            return res.status(400).json(GenericFunctions.genericResponse("Usuario / Password no son correcto - estado: false",{},400,[],0));
+            return res.status(400).json(GenericResponse.responseWithData("Usuario / Password no son correcto - estado: false",{},400,[],0));
         }
 
         const validPassword = bcryptjs.compareSync(password, user.password);
         if(!validPassword){
-            return res.status(400).json(GenericFunctions.genericResponse("Usuario / Password no son correcto - Password",{},400,[],0));
+            return res.status(400).json(GenericResponse.responseWithData("Usuario / Password no son correcto - Password",{},400,[],0));
         }
 
         const token = await generarJWT(user._id)
 
-        res.status(200).json(GenericFunctions.genericResponse("OK",{user, token},200,[],0));
+        res.status(200).json(GenericResponse.responseWithData("OK",{user, token},200,[],0));
     }catch(e){
-       return res.status(500).json(GenericFunctions.genericResponse("Algo salio mal, contacte al adminstrador "+ e,{},500,[],0));
+       return res.status(500).json(GenericResponse.responseWithData("Algo salio mal, contacte al adminstrador "+ e,{},500,[],0));
     }
 }
 
@@ -52,14 +52,14 @@ const googleSignIn = async (req = request, res= response) => {
         }
 
         if(!usuario.status) {
-            return res.status(401).json(GenericFunctions.genericResponse("Hable con el administrador, usuario bloqueado",{},401,[],0))
+            return res.status(401).json(GenericResponse.responseWithData("Hable con el administrador, usuario bloqueado",{},401,[],0))
         }
 
         const token = await generarJWT(usuario._id);
         
-        res.status(200).json(GenericFunctions.genericResponse("OK",{usuario, token},200,[],0));
+        res.status(200).json(GenericResponse.responseWithData("OK",{usuario, token},200,[],0));
     } catch (error) {
-       return res.status(500).json(GenericFunctions.genericResponse("El token no se pudo verificar "+ error,{},500,[],0));
+       return res.status(500).json(GenericResponse.responseWithData("El token no se pudo verificar "+ error,{},500,[],0));
     }
     
 }

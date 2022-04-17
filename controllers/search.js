@@ -1,7 +1,7 @@
 
 const {request, response} = require('express');
 const { ObjectId } = require('mongoose').Types;
-const GenericFunctions = require('../utils/GenericFunctions');
+const GenericResponse = require('../utils/GenericResponses');
 
 const { Category,
         Product,
@@ -17,7 +17,7 @@ const searchUsers = async (termino = '', res = response) => {
     if(esMongoId){
         const usuario = await User.findById(termino);
        
-        return res.status(200).json(  GenericFunctions.genericResponse(`OK`, usuario == null ? [] : [ usuario ] ,200,[], usuario == null ? 0 : 1))
+        return res.status(200).json(  GenericResponse.responseWithData(`OK`, usuario == null ? [] : [ usuario ] ,200,[], usuario == null ? 0 : 1))
     }
     const  regexp = new RegExp(termino, 'i');
     const usuarios = await User.find({
@@ -25,7 +25,7 @@ const searchUsers = async (termino = '', res = response) => {
             $and:[ { status: true }]    
     });
 
-    return res.status(200).json(  GenericFunctions.genericResponse(`OK`, usuarios == null ? [] : [ usuarios ] ,200,[], usuarios.length))
+    return res.status(200).json(  GenericResponse.responseWithData(`OK`, usuarios == null ? [] : [ usuarios ] ,200,[], usuarios.length))
 
 }
 
@@ -35,12 +35,12 @@ const searchCategory = async (termino = '', res = response) => {
     if(esMongoId){
         const category = await Category.findById(termino);
        
-        return res.status(200).json(  GenericFunctions.genericResponse(`OK`, category == null ? [] : [ category ] ,200,[], category == null ? 0 : 1))
+        return res.status(200).json(  GenericResponse.responseWithData(`OK`, category == null ? [] : [ category ] ,200,[], category == null ? 0 : 1))
     }
     const  regexp = new RegExp(termino, 'i');
     const categorias = await Category.find({ name: regexp, status: true  });
 
-    return res.status(200).json(  GenericFunctions.genericResponse(`OK`, categorias == null ? [] : [ categorias ] ,200,[], categorias == null ? 0 : categorias.length))
+    return res.status(200).json(  GenericResponse.responseWithData(`OK`, categorias == null ? [] : [ categorias ] ,200,[], categorias == null ? 0 : categorias.length))
 }
 
 const searchProducts = async (termino = '', res = response) => {
@@ -49,7 +49,7 @@ const searchProducts = async (termino = '', res = response) => {
     if(esMongoId){
         const producto = await Product.findById(termino).populate('category','name');
        
-        return res.status(200).json(  GenericFunctions.genericResponse(`OK`, producto == null ? [] : [ producto ] ,200,[], producto == null ? 0 : 1))
+        return res.status(200).json(  GenericResponse.responseWithData(`OK`, producto == null ? [] : [ producto ] ,200,[], producto == null ? 0 : 1))
     }
     const  regexp = new RegExp(termino, 'i');
     const productos = await Product.find({
@@ -57,7 +57,7 @@ const searchProducts = async (termino = '', res = response) => {
             $and:[ { status: true }, {available: true}]    
     }).populate('category','name');
 
-    return res.status(200).json(  GenericFunctions.genericResponse(`OK`, productos == null ? [] : [ productos ] ,200,[], productos.length))
+    return res.status(200).json(  GenericResponse.responseWithData(`OK`, productos == null ? [] : [ productos ] ,200,[], productos.length))
 
 }
 
@@ -65,7 +65,7 @@ const searchProducts = async (termino = '', res = response) => {
 const search = async (req = request, res = response) => {
     const {coleccion ,termino}  = req.params;
     if(!coleccionesPermitids.includes( coleccion )){
-       return  res.status(400).json( GenericFunctions.genericResponse(`La colecciones permitidas son ${coleccionesPermitids}`,{},400,[],0) )
+       return  res.status(400).json( GenericResponse.responseWithData(`La colecciones permitidas son ${coleccionesPermitids}`,{},400,[],0) )
     }
 
     switch(coleccion){
@@ -82,7 +82,7 @@ const search = async (req = request, res = response) => {
                 searchProducts(termino, res);
             break;
         default:
-           return  res.status(500).json( GenericFunctions.genericResponse(`No hay colecciones para buscar`,{},500,[],0) )
+           return  res.status(500).json( GenericResponse.responseWithData(`No hay colecciones para buscar`,{},500,[],0) )
           
     }
 
